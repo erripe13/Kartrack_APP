@@ -13,7 +13,7 @@
 - position sur le circuit
 - temps (tour, S1, S2, S3) avec différence avec le meilleur temps
 
-
+### Illustration
 ![Texte alternatif](schema_interface.jpeg)
 
 ## Auteurs
