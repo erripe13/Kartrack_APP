@@ -1,4 +1,6 @@
+import customtkinter
 import customtkinter as ctk
+import tkintermapview
 from PIL import ImageTk, Image
 import tkinter as tk
 
@@ -19,7 +21,8 @@ class RaceInterface:
             self.canvas,
             width=self.screen_width,
             height=self.banner_height,
-            fg_color="#333333"
+            fg_color="#333333",
+            corner_radius=0
         )
         self.banner.place(x=0, y=0)
         self.widgets.append(self.banner)
@@ -28,6 +31,7 @@ class RaceInterface:
             self.banner,
             text="Nom du Circuit",
             font=("Orbitron", 24),
+            corner_radius=0,
             text_color="white"
         )
         self.track_name_label.place(relx=0.5, rely=0.5, anchor="center")
@@ -35,28 +39,45 @@ class RaceInterface:
 
         # --------- Image satellite à gauche (2/3) ---------
         left_width = int(self.screen_width * 2 / 3)
-        left_height = self.screen_height - self.banner_height
+        left_height = self.screen_height - self.banner_height-50
 
-        self.image_frame = ctk.CTkFrame(
+        self.map_frame = ctk.CTkFrame(
             self.canvas,
             width=left_width,
             height=left_height,
+            corner_radius=0,
             fg_color="#222222"
         )
-        self.image_frame.place(x=0, y=self.banner_height)
-        self.widgets.append(self.image_frame)
+        self.map_frame.place(x=0, y=self.banner_height)
+        self.widgets.append(self.map_frame)
 
-        # Image fictive (à remplacer par une vraie image satellite)
-        try:
-            image = Image.open("circuit_satellite.jpg")  # mets le chemin de ton image
-            image = image.resize((left_width, left_height))
-            self.image_sat = ImageTk.PhotoImage(image)
+        self.map_widget = tkintermapview.TkinterMapView(self.map_frame,width=(left_width-40),height=(left_height-50))
+        self.map_widget.place(relx=0.5, rely=0.5, anchor="center")
 
-            self.image_label = ctk.CTkLabel(self.image_frame, image=self.image_sat, text="")
-            self.image_label.pack(fill="both", expand=True)
-            self.widgets.append(self.image_label)
-        except Exception as e:
-            print("Image non chargée :", e)
+        # --------- Frame coordonées ---------7
+
+        entry_width = int(self.screen_width * 2 / 3)
+        entry_height = self.screen_height - self.banner_height - 40;
+
+        self.entry_frame = ctk.CTkFrame(
+            self.canvas,
+            width=entry_width,
+            height=entry_height,
+            corner_radius=0,
+            fg_color="#222222"
+        )
+
+        self.entry_frame.place(x=0, y=self.banner_height-40)
+        self.widgets.append(self.entry_frame)
+
+        self.entry_lat = ctk.CTkEntry(master=self.entry_frame, placeholder_text="lattitude :")
+        self.entry_long = ctk.CTkEntry(master=self.entry_frame, placeholder_text="longitude :")
+        self.entry_lat.grid(row=0, column=0, sticky="we", padx=(12, 0), pady=12)
+        self.entry_long.grid(row=0, column=1, sticky="we", padx=(12, 0), pady=12)
+
+        self.entry_butt = ctk.CTkButton(self.entry_frame,text="Search",width=90,command=self.search_event)
+        self.entry_butt.grid(row=0,column=3,sticky="we",padx=(12,0),pady=12)
+
 
         # --------- Chronos à droite (1/3) ---------
         right_width = self.screen_width - left_width
@@ -66,17 +87,13 @@ class RaceInterface:
             self.canvas,
             width=right_width,
             height=right_height,
+            corner_radius=0,
             fg_color="#1A1D21"
         )
         self.time_frame.place(x=left_width, y=self.banner_height)
         self.widgets.append(self.time_frame)
 
-        self.time_label = ctk.CTkLabel(
-            self.time_frame,
-            text="Chronos",
-            font=("Orbitron", 20),
-            text_color="white"
-        )
+
         self.time_label.pack(pady=20)
 
         # --------- Bouton Retour ---------
@@ -98,6 +115,9 @@ class RaceInterface:
         self.widgets.append(self.button_back)
 
         print("Interface Kartrack LIVE affichée !")
+
+    def search_event(self, event=None):
+        self.map_widget.set_position(float(self.entry_lat.get()), float(self.entry_long.get()))
 
     def return_to_menu(self):
         for widget in self.widgets:
