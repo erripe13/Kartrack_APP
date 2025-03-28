@@ -96,14 +96,15 @@ class MainInterface:
         self.race_interface = RaceInterface(self.canvas, self.show_main_menu)
 
     def show_main_menu(self):
-        # Supprimer tous les widgets de la course (RaceInterface)
-        for widget in self.canvas.winfo_children():
-            widget.place_forget()
+        # Remettre le fond principal
+        self.canvas.delete("all")  # Supprime tous les éléments (dont le fond course)
+        self.bg_item = self.canvas.create_image(0, 0, anchor="nw", image=self.background_photo)
 
-        # Réafficher les boutons du menu principal
+        # Replacer les boutons
         self.button1.place(relx=0.35, rely=0.5, anchor="center")
         self.button2.place(relx=0.50, rely=0.5, anchor="center")
         self.button3.place(relx=0.65, rely=0.5, anchor="center")
+
 
 # Lancement de l'application
 if __name__ == "__main__":
