@@ -1,11 +1,16 @@
 import customtkinter as ctk
 from PIL import Image, ImageTk, ImageFont
 from PIL.Image import Resampling
+# from karttrack_app import KartTrackApp
+from race_interface import RaceInterface
+# from review_interface import ReviewInterface
 
-class KartTrackApp:
+
+class MainInterface:
     def __init__(self, root):
         self.root = root
         self.root.title("KartTrack Interface")
+        ctk.FontManager.load_font("fonts/Orbitron_Black.ttf")
 
         # Passer en mode plein écran
         self.root.attributes("-fullscreen", True)
@@ -20,56 +25,57 @@ class KartTrackApp:
         self.bg_item = self.canvas.create_image(0, 0, anchor="nw", image=self.background_photo)
 
         # Charger la police personnalisée
-        try:
-            self.custom_font = ImageFont.truetype("fonts/Orbitron_Black.ttf", 16)
-        except Exception as e:
-            print(f"Erreur lors du chargement de la police : {e}")
-            self.custom_font = ("Arial", 16)  # Police de secours
+        self.custom_font = ctk.CTkFont(family="Orbitron",size=20)
 
         # Ajouter les boutons directement sur le canvas
         self.button1 = ctk.CTkButton(
             self.canvas,
             text="Kartrack LIVE",
-            command=self.start_race,
-            fg_color="blue",
-            corner_radius=0,
+            command=self.race_interface,
+            width=200,
+            height=100,
+            border_width=3,
+            border_color="#191919",
+            fg_color=("#DB3E39", "#821D1A"),
+            bg_color="black",
+            corner_radius=10,
             text_color="white",
-            font=(self.custom_font, 16)
+            font=("Orbitron",20)
         )
         self.button1.place(relx=0.35, rely=0.5, anchor="center")
 
         self.button2 = ctk.CTkButton(
             self.canvas,
             text="Review",
-            command=self.open_options,
-            fg_color="blue",
-            corner_radius=0,
+            #command=self.review_interface,
+            width=200,
+            height=100,
+            border_width=3,
+            border_color="#191919",
+            fg_color=("#DB3E39", "#821D1A"),
+            bg_color="black",
+            corner_radius=10,
             text_color="white",
-            font=(self.custom_font, 16)
+            font=("Orbitron", 20)
         )
-        self.button2.place(relx=0.45, rely=0.5, anchor="center")
+        self.button2.place(relx=0.50, rely=0.5, anchor="center")
 
         self.button3 = ctk.CTkButton(
             self.canvas,
-            text="Setup",
-            command=self.root.quit,
-            fg_color="blue",
-            corner_radius=0,
-            text_color="white",
-            font=(self.custom_font, 16)
-        )
-        self.button3.place(relx=0.55, rely=0.5, anchor="center")
-
-        self.button4 = ctk.CTkButton(
-            self.canvas,
             text="Quitter",
             command=self.root.quit,
-            fg_color="blue",
-            corner_radius=0,
+            width=200,
+            height=100,
+            border_width=3,
+            border_color="#191919",
+            fg_color=("#DB3E39", "#821D1A"),
+            bg_color="black",
+            corner_radius=10,
             text_color="white",
-            font=(self.custom_font, 16)
+            font=("Orbitron", 20)
         )
-        self.button4.place(relx=0.65, rely=0.5, anchor="center")
+        self.button3.place(relx=0.65, rely=0.5, anchor="center")
+
 
         # Redimensionner l'image de fond lors du redimensionnement de la fenêtre
         self.root.bind("<Configure>", self.resize_background)
@@ -81,14 +87,27 @@ class KartTrackApp:
         self.background_photo = ImageTk.PhotoImage(resized_image)
         self.canvas.itemconfig(self.bg_item, image=self.background_photo)
 
-    def start_race(self):
-        print("Course commencée !")
+    def race_interface(self):
+        # Masquer l'interface principale
+        for widget in self.canvas.winfo_children():
+            widget.place_forget()
 
-    def open_options(self):
-        print("Options ouvertes !")
+        # Afficher l'interface de la course
+        self.race_interface = RaceInterface(self.canvas, self.show_main_menu)
+
+    def show_main_menu(self):
+        # Supprimer tous les widgets de la course (RaceInterface)
+        for widget in self.canvas.winfo_children():
+            widget.place_forget()
+
+        # Réafficher les boutons du menu principal
+        self.button1.place(relx=0.35, rely=0.5, anchor="center")
+        self.button2.place(relx=0.50, rely=0.5, anchor="center")
+        self.button3.place(relx=0.65, rely=0.5, anchor="center")
 
 # Lancement de l'application
 if __name__ == "__main__":
+
     root = ctk.CTk()
-    app = KartTrackApp(root)
+    app = MainInterface(root)
     root.mainloop()
