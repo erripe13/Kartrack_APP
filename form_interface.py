@@ -12,7 +12,7 @@ class FormulaireInterface:
             self.canvas,
             width=900,  # Largeur ajustée pour trois sections
             height=600,
-            corner_radius=10,
+            corner_radius=0,
             fg_color="#222222"
         )
         self.entry_frame.place(relx=0.5, rely=0.5, anchor="center")
@@ -48,7 +48,7 @@ class FormulaireInterface:
         # Création des trois sections alignées horizontalement
         for col, section_title in enumerate(section_titles):
             # Sous-cadre pour chaque section
-            section_frame = ctk.CTkFrame(self.entry_frame, corner_radius=10, fg_color="#333333")
+            section_frame = ctk.CTkFrame(self.entry_frame, corner_radius=0, fg_color="#333333")
             section_frame.grid(row=0, column=col, padx=10, pady=10)
 
             # Ajouter le titre de la section
