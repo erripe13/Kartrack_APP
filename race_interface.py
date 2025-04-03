@@ -34,7 +34,7 @@ class RaceInterface:
             corner_radius=0,
             text_color="white"
         )
-        self.track_name_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.track_name_label.place(relx=0.1, rely=0.5, anchor="center")
         self.widgets.append(self.track_name_label)
 
         # --------- Image satellite à gauche (2/3) ---------
@@ -48,7 +48,7 @@ class RaceInterface:
             corner_radius=0,
             fg_color="#222222"
         )
-        self.map_frame.place(x=0, y=self.banner_height)
+        self.map_frame.place(x=0, y=self.banner_height+50)
         self.widgets.append(self.map_frame)
 
         self.map_widget = tkintermapview.TkinterMapView(self.map_frame,width=(left_width-40),height=(left_height-50))
@@ -57,7 +57,7 @@ class RaceInterface:
         # --------- Frame coordonées ---------7
 
         entry_width = int(self.screen_width * 2 / 3)
-        entry_height = self.screen_height - self.banner_height - 40;
+        entry_height = 50;
 
         self.entry_frame = ctk.CTkFrame(
             self.canvas,
@@ -67,7 +67,7 @@ class RaceInterface:
             fg_color="#222222"
         )
 
-        self.entry_frame.place(x=0, y=self.banner_height-40)
+        self.entry_frame.place(x=0, y=self.banner_height)
         self.widgets.append(self.entry_frame)
 
         self.entry_lat = ctk.CTkEntry(master=self.entry_frame, placeholder_text="lattitude :")
