@@ -13,13 +13,18 @@ class RaceInterface:
 
         self.entry_frame = ctk.CTkFrame(
             self.canvas,
-            width=500,  # Largeur du cadre (par exemple, 500 pixels)
-            height=300,  # Hauteur du cadre (par exemple, 300 pixels)
+            width=1000,
+            height=900,
             corner_radius=10,
-            fg_color="#222222"
+            fg_color="#191919",
+            border_color="white",
+            bg_color="black"
         )
         # Placer le cadre au centre de l'écran
         self.entry_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        self.entry_name= ctk.CTkEntry(self.entry_frame, placeholder_text="Nom du Circuit",font=("Orbitron",24))
+        self.entry_name.pack(pady=10, padx=20)
 
         self.entry_lat = ctk.CTkEntry(self.entry_frame, placeholder_text="Latitude",font=("Orbitron",24))
         self.entry_lat.pack(pady=10, padx=20)
@@ -30,11 +35,16 @@ class RaceInterface:
 
         self.entry_butt = ctk.CTkButton(
             self.entry_frame,
+            width=self.entry_frame.winfo_width()-20,
             text="Valider les Coordonnées",
             command=self.display_main_interface,
+            fg_color=("#DB3E39", "#821D1A"),
+            bg_color="black",
+            border_color="white",
+            corner_radius=10,
             font=("Orbitron", 24)
         )
-        self.entry_butt.pack(pady=20)
+        self.entry_butt.pack(pady=20,anchor="center")
 
         self.screen_width = self.canvas.winfo_screenwidth()
         self.screen_height = self.canvas.winfo_screenheight()
@@ -60,7 +70,7 @@ class RaceInterface:
 
         self.track_name_label = ctk.CTkLabel(
             self.banner,
-            text="Nom du Circuit",
+            text=self.entry_name.get(),
             font=("Orbitron", 24),
             corner_radius=0,
             text_color="white"
@@ -98,7 +108,17 @@ class RaceInterface:
             fg_color="#1A1D21"
         )
         self.time_frame.place(x=left_width, y=self.banner_height, anchor="nw")
+
+        self.time_label = ctk.CTkLabel(
+            self.time_frame,
+            text="Temps",
+            font=("Orbitron", 24),
+            corner_radius=0,
+            text_color="white"
+        )
+        self.time_label.place(relx=0.5, rely=0.1, anchor="center")
         self.widgets.append(self.time_frame)
+
 
         # --------- Bouton Retour ---------
         self.button_back = ctk.CTkButton(
@@ -118,10 +138,26 @@ class RaceInterface:
         self.button_back.place(x=left_width, y=self.screen_height-50,anchor="nw")
         self.widgets.append(self.button_back)
 
-        print("Interface Kartrack LIVE affichée !")
-
     def search_event(self, event=None):
-        self.map_widget.set_position(float(self.entry_lat.get()), float(self.entry_long.get()))
+        # Coordonnées par défaut pour Cergy
+        default_lat = 49.0388
+        default_long = 2.0784
+
+        # Vérifier si l'utilisateur a saisi des valeurs
+        latitude = self.entry_lat.get() or default_lat
+        longitude = self.entry_long.get() or default_long
+
+        # Convertir les valeurs saisies ou définies par défaut en float
+        try:
+            latitude = float(latitude)
+            longitude = float(longitude)
+        except ValueError:
+            # Si les valeurs fournies sont invalides, revenir aux valeurs par défaut
+            latitude = default_lat
+            longitude = default_long
+
+        # Définir la position sur la map_widget
+        self.map_widget.set_position(latitude, longitude, zoom=10)
 
     def return_to_menu(self):
         for widget in self.widgets:
