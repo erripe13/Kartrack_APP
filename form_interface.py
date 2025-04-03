@@ -21,12 +21,22 @@ class FormulaireInterface:
         # Création des trois sections côte à côte
         self.create_sections()
 
-        # Boutons Enregistrer et Retour
-        self.save_button = ctk.CTkButton(self.entry_frame, text="Enregistrer en .txt", command=self.save_to_txt, font=("Orbitron", 16))
-        self.save_button.grid(row=1, column=1, columnspan=3, pady=20)
+        # Boutons Enregistrer et Retour (placés sous la Section 2, au centre de l'interface)
+        self.save_button = ctk.CTkButton(
+            self.entry_frame,
+            text="Enregistrer en .txt",
+            command=self.save_to_txt,
+            font=("Orbitron", 16),
+        )
+        self.save_button.grid(row=2, column=1, padx=10, pady=10)  # Placé sous la colonne de Section 2
 
-        self.back_button = ctk.CTkButton(self.entry_frame, text="Retour", command=self.return_to_menu, font=("Orbitron", 16))
-        self.back_button.grid(row=2, column=1, columnspan=3, pady=(0, 10))
+        self.back_button = ctk.CTkButton(
+            self.entry_frame,
+            text="Retour",
+            command=self.return_to_menu,
+            font=("Orbitron", 16),
+        )
+        self.back_button.grid(row=3, column=1, padx=10, pady=(0, 10))  # Placé juste en dessous du bouton Enregistrer
 
     def create_sections(self):
         """
