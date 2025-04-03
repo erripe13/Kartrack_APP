@@ -60,29 +60,23 @@ class FormulaireInterface:
 
     def add_section_fields(self, frame):
         """
-        Ajoute deux lignes de champs dans une section:
-        - Ligne 1 : Titre + Longitude + Latitude
-        - Ligne 2 : Titre différent + Longitude + Latitude
+        Ajoute deux champs (Longitude et Latitude) dans une section :
+        - Ligne 1 : Longitude
+        - Ligne 2 : Latitude
         """
-        # Ligne 1
-        row_title_1 = ctk.CTkLabel(frame, text="Titre Ligne 1 :", anchor="w", font=("Orbitron", 16))
-        row_title_1.grid(row=1, column=0, padx=5, pady=5, sticky="e")
+        # Ligne pour Longitude
+        row_title_longitude = ctk.CTkLabel(frame, text="Longitude :", anchor="w", font=("Orbitron", 16))
+        row_title_longitude.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
-        entry_longitude_1 = ctk.CTkEntry(frame, placeholder_text="Longitude", font=("Orbitron", 16))
-        entry_longitude_1.grid(row=1, column=1, padx=5, pady=5)
+        entry_longitude = ctk.CTkEntry(frame, placeholder_text="Longitude", font=("Orbitron", 16))
+        entry_longitude.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
-        entry_latitude_1 = ctk.CTkEntry(frame, placeholder_text="Latitude", font=("Orbitron", 16))
-        entry_latitude_1.grid(row=1, column=2, padx=5, pady=5)
+        # Ligne pour Latitude
+        row_title_latitude = ctk.CTkLabel(frame, text="Latitude :", anchor="w", font=("Orbitron", 16))
+        row_title_latitude.grid(row=2, column=0, padx=5, pady=5, sticky="e")
 
-        # Ligne 2
-        row_title_2 = ctk.CTkLabel(frame, text="Titre Ligne 2 :", anchor="w", font=("Orbitron", 16))
-        row_title_2.grid(row=2, column=0, padx=5, pady=5, sticky="e")
-
-        entry_longitude_2 = ctk.CTkEntry(frame, placeholder_text="Longitude", font=("Orbitron", 16))
-        entry_longitude_2.grid(row=2, column=1, padx=5, pady=5)
-
-        entry_latitude_2 = ctk.CTkEntry(frame, placeholder_text="Latitude", font=("Orbitron", 16))
-        entry_latitude_2.grid(row=2, column=2, padx=5, pady=5)
+        entry_latitude = ctk.CTkEntry(frame, placeholder_text="Latitude", font=("Orbitron", 16))
+        entry_latitude.grid(row=2, column=1, padx=5, pady=5, sticky="ew")
 
     def save_to_txt(self):
         """
