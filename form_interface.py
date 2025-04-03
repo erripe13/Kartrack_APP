@@ -22,10 +22,10 @@ class FormulaireInterface:
         self.create_sections()
 
         # Boutons Enregistrer et Retour
-        self.save_button = ctk.CTkButton(self.entry_frame, text="Enregistrer en .txt", command=self.save_to_txt)
+        self.save_button = ctk.CTkButton(self.entry_frame, text="Enregistrer en .txt", command=self.save_to_txt, font=("Orbitron", 16))
         self.save_button.grid(row=1, column=1, columnspan=3, pady=20)
 
-        self.back_button = ctk.CTkButton(self.entry_frame, text="Retour", command=self.return_to_menu)
+        self.back_button = ctk.CTkButton(self.entry_frame, text="Retour", command=self.return_to_menu, font=("Orbitron", 16))
         self.back_button.grid(row=2, column=1, columnspan=3, pady=(0, 10))
 
     def create_sections(self):
@@ -42,7 +42,7 @@ class FormulaireInterface:
             section_frame.grid(row=0, column=col, padx=10, pady=10)
 
             # Ajouter le titre de la section
-            title_label = ctk.CTkLabel(section_frame, text=section_title, font=("Arial", 16, "bold"))
+            title_label = ctk.CTkLabel(section_frame, text=section_title, font=("Orbitron", 16))
             title_label.grid(row=0, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
             # Ajouter champs pour chaque ligne de la section
@@ -55,23 +55,23 @@ class FormulaireInterface:
         - Ligne 2 : Titre différent + Longitude + Latitude
         """
         # Ligne 1
-        row_title_1 = ctk.CTkLabel(frame, text="Titre Ligne 1 :", anchor="w")
+        row_title_1 = ctk.CTkLabel(frame, text="Titre Ligne 1 :", anchor="w", font=("Orbitron", 16))
         row_title_1.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
-        entry_longitude_1 = ctk.CTkEntry(frame, placeholder_text="Longitude")
+        entry_longitude_1 = ctk.CTkEntry(frame, placeholder_text="Longitude", font=("Orbitron", 16))
         entry_longitude_1.grid(row=1, column=1, padx=5, pady=5)
 
-        entry_latitude_1 = ctk.CTkEntry(frame, placeholder_text="Latitude")
+        entry_latitude_1 = ctk.CTkEntry(frame, placeholder_text="Latitude", font=("Orbitron", 16))
         entry_latitude_1.grid(row=1, column=2, padx=5, pady=5)
 
         # Ligne 2
-        row_title_2 = ctk.CTkLabel(frame, text="Titre Ligne 2 :", anchor="w")
+        row_title_2 = ctk.CTkLabel(frame, text="Titre Ligne 2 :", anchor="w", font=("Orbitron", 16))
         row_title_2.grid(row=2, column=0, padx=5, pady=5, sticky="e")
 
-        entry_longitude_2 = ctk.CTkEntry(frame, placeholder_text="Longitude")
+        entry_longitude_2 = ctk.CTkEntry(frame, placeholder_text="Longitude", font=("Orbitron", 16))
         entry_longitude_2.grid(row=2, column=1, padx=5, pady=5)
 
-        entry_latitude_2 = ctk.CTkEntry(frame, placeholder_text="Latitude")
+        entry_latitude_2 = ctk.CTkEntry(frame, placeholder_text="Latitude", font=("Orbitron", 16))
         entry_latitude_2.grid(row=2, column=2, padx=5, pady=5)
 
     def save_to_txt(self):
