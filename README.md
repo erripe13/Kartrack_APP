@@ -23,7 +23,3 @@
 - [@mariam-m95](https://www.github.com/mariam-m95)
 
 
-## API 
-
-- [WeatherAPI](https://www.weatherapi.com/)
-
