@@ -22,3 +22,8 @@
 - [@amalraj78](https://www.github.com/amalraj78)
 - [@mariam-m95](https://www.github.com/mariam-m95)
 
+
+## API 
+
+- [WeatherAPI](https://www.weatherapi.com/)
+
