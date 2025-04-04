@@ -23,4 +23,9 @@
 - [@mariam-m95](https://www.github.com/mariam-m95)
 
 ## Icones météo
+
 Icons by [Icons8](https://icones8.fr/license)
+
+## API 
+
+- [WeatherAPI](https://www.weatherapi.com/)
