@@ -4,6 +4,8 @@ import tkintermapview
 from PIL import ImageTk, Image
 import tkinter as tk
 import os
+
+from customtkinter import CTkLabel
 from dotenv import load_dotenv
 import requests
 from tkinter import Label,Tk,PhotoImage
@@ -71,13 +73,14 @@ class RaceInterface:
 
     def display_main_interface(self):
         # --------- Bandeau supérieur ---------
-        self.banner_height = int(self.screen_height * 0.1)
+        self.banner_height = int(self.screen_height * 0.12)
 
         self.banner = ctk.CTkFrame(
             self.canvas,
             width=self.screen_width,
             height=self.banner_height,
             fg_color="#333333",
+            bg_color="black",
             corner_radius=0
         )
         self.banner.place(x=0, y=0, anchor="nw")
@@ -108,7 +111,8 @@ class RaceInterface:
             width=left_width,
             height=left_height,
             corner_radius=0,
-            fg_color="#222222"
+            fg_color="#222222",
+            bg_color="black"
         )
         self.map_frame.place(x=0, y=self.banner_height)
         self.widgets.append(self.map_frame)
@@ -144,7 +148,7 @@ class RaceInterface:
         # --------- Bouton Retour ---------
         self.button_back = ctk.CTkButton(
             self.canvas,
-            text="Retour au Menu Principal",
+            text="Menu Principal",
             command=self.return_to_menu,
             width=right_width,
             height=50,
@@ -191,7 +195,6 @@ class RaceInterface:
 
         # Si les champs sont vides, utiliser les coordonnées par défaut
         if not latitude_input or not longitude_input:
-            print("Aucune coordonnée saisie, utilisation des valeurs par défaut (Cergy).")
             latitude = default_lat
             longitude = default_long
         else:
@@ -199,7 +202,6 @@ class RaceInterface:
                 latitude = float(latitude_input)
                 longitude = float(longitude_input)
             except ValueError:
-                print("Coordonnées invalides fournies, utilisation des valeurs par défaut (Cergy).")
                 latitude = default_lat
                 longitude = default_long
 
@@ -218,11 +220,11 @@ class RaceInterface:
         if response.status_code == 200:
             # Parse les données si la requête est un succès
             data = response.json()
-            condition_text = data["current"]["condition"]["text"]
             temperature = data["current"]["temp_c"]
+            condition_text = data["current"]["condition"]["text"]
 
             # Obtenir l'icône GIF associé
-            gif_path = self.get_weather_gif(condition_text)
+            gif_path = get_weather_gif(condition_text)
 
             return {
                 "température": temperature,
@@ -233,9 +235,6 @@ class RaceInterface:
             # En cas d'échec de la requête
             print(f"Erreur API : code {response.status_code}, détail : {response.text}")
             return {"erreur": "Impossible de récupérer les données météo."}
-
-    def get_weather_gif(condition_text):
-        return GIF_FOLDER + CONDITIONS_TO_GIFS.get(condition_text, "icons8-partly-cloudy.gif")
 
     def display_weather(self):
 
@@ -263,20 +262,21 @@ class RaceInterface:
             icon_photo = ImageTk.PhotoImage(icon_image)
 
             # Créer un label pour afficher l'icône météo
-            icon_label = Label(self.banner, image=icon_photo, bg="white")
+            icon_label = Label(self.banner, image=icon_photo,bg="#333333")
             icon_label.image = icon_photo  # Sauvegarder la référence pour éviter la suppression
-            icon_label.pack(side="top", pady=5)
+            icon_label.pack(side="top", pady=10)
         except:
             print(f"Erreur lors du chargement de l'icône météo : {gif_path}")
 
         # Ajouter la température et les conditions météo (centré)
-        weather_label = Label(
+        weather_label = ctk.CTkLabel(
             self.banner,
             text=f"{température}°C | {condition}",
-            font=("Arial", 14, "bold"),
-            bg="white"
+            font=("Orbitron", 20, "bold"),
+            text_color="#821D1A",
+            bg_color="#333333"
         )
-        weather_label.pack(side="top", pady=5)
+        weather_label.pack(side="top")
 
         # Ajoutez d'autres informations ou styles si nécessaire
 
@@ -286,3 +286,7 @@ class RaceInterface:
 
         self.entry_frame.destroy()
         self.show_main_menu()
+
+
+def get_weather_gif(condition_text):
+    return GIF_FOLDER + CONDITIONS_TO_GIFS.get(condition_text, "icons8-partly-cloudy.gif")
