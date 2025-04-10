@@ -1,23 +1,7 @@
-import customtkinter
 import customtkinter as ctk
 import tkintermapview
 from PIL import ImageTk, Image
-import tkinter as tk
-import os
-
-from customtkinter import CTkLabel
-from dotenv import load_dotenv
-import requests
-from tkinter import Label,Tk,PhotoImage
-
-from dico_meteo import GIF_FOLDER, CONDITIONS_TO_GIFS
-
-dotenv_path = ".venv/.env"
-load_dotenv(dotenv_path=dotenv_path)
-
-API_KEY = os.getenv("WEATHER_API_KEY")
-URL_CURRENT = "http://api.weatherapi.com/v1/current.json"
-URL_FORECAST = "http://api.weatherapi.com/v1/forecast.json"
+import weather_mod as wm
 
 class RaceInterface:
     def __init__(self, canvas, show_main_menu):
@@ -64,7 +48,7 @@ class RaceInterface:
         self.screen_width = self.canvas.winfo_screenwidth()
         self.screen_height = self.canvas.winfo_screenheight()
 
-        self.get_current_weather_conditions()
+        #wm.get_current_weather_conditions(self)
 
         self.map_frame = None
         self.time_frame = None
@@ -72,6 +56,7 @@ class RaceInterface:
 
 
     def display_main_interface(self):
+
         # --------- Bandeau supérieur ---------
         self.banner_height = int(self.screen_height * 0.12)
 
@@ -84,7 +69,7 @@ class RaceInterface:
             corner_radius=0
         )
         self.banner.place(x=0, y=0, anchor="nw")
-        self.display_weather()
+        wm.display_weather(self)
         self.banner.pack(fill="x")
         self.banner.pack_propagate(False)
         self.widgets.append(self.banner)
@@ -97,8 +82,6 @@ class RaceInterface:
             text_color="white"
         )
         self.track_name_label.place(relx=0.1, rely=0.5, anchor="center")
-
-
         self.widgets.append(self.track_name_label)
 
 
@@ -184,100 +167,6 @@ class RaceInterface:
         # Définir la position sur la map_widget
         self.map_widget.set_position(latitude, longitude, zoom=10)
 
-    def get_current_weather_conditions(self):
-        # Coordonnées par défaut pour Cergy
-        default_lat = 49.0388
-        default_long = 2.0784
-
-        # Récupérer les valeurs saisies par l'utilisateur
-        latitude_input = self.entry_lat.get().strip()
-        longitude_input = self.entry_long.get().strip()
-
-        # Si les champs sont vides, utiliser les coordonnées par défaut
-        if not latitude_input or not longitude_input:
-            latitude = default_lat
-            longitude = default_long
-        else:
-            try:
-                latitude = float(latitude_input)
-                longitude = float(longitude_input)
-            except ValueError:
-                latitude = default_lat
-                longitude = default_long
-
-        # Préparer les paramètres pour l'API avec les coordonnées finales
-        params = {
-            "key": API_KEY,
-            "q": f"{latitude},{longitude}",  # Format {lat,long}
-            "lang": "fr"  # Langue française
-        }
-
-        print(f"Coordonnées envoyées : lat={latitude}, long={longitude}")  # Debugging
-
-        # Effectuer la requête vers l'API
-        response = requests.get(URL_CURRENT, params=params)
-
-        if response.status_code == 200:
-            # Parse les données si la requête est un succès
-            data = response.json()
-            temperature = data["current"]["temp_c"]
-            condition_text = data["current"]["condition"]["text"]
-
-            # Obtenir l'icône GIF associé
-            gif_path = get_weather_gif(condition_text)
-
-            return {
-                "température": temperature,
-                "condition_text": condition_text,
-                "gif_path": gif_path  # Inclure le chemin du fichier GIF météo
-            }
-        else:
-            # En cas d'échec de la requête
-            print(f"Erreur API : code {response.status_code}, détail : {response.text}")
-            return {"erreur": "Impossible de récupérer les données météo."}
-
-    def display_weather(self):
-
-        lat = self.entry_lat
-        long = self.entry_long
-
-        weather_data = self.get_current_weather_conditions()
-
-        if "erreur" in weather_data:
-            print("Erreur : ", weather_data["erreur"])
-            return
-
-        # Supprimer tout widget existant dans le bandeau avant d'afficher la météo
-        for widget in self.banner.winfo_children():
-            widget.destroy()
-
-        # Extraire les données météo
-        température = weather_data.get('température', 'N/A')
-        condition = weather_data.get('condition_text', 'N/A')
-        gif_path = weather_data.get('gif_path', '')
-
-        # Charger l'icône météo (au centre)
-        try:
-            icon_image = Image.open(gif_path)
-            icon_photo = ImageTk.PhotoImage(icon_image)
-
-            # Créer un label pour afficher l'icône météo
-            icon_label = Label(self.banner, image=icon_photo,bg="#333333")
-            icon_label.image = icon_photo  # Sauvegarder la référence pour éviter la suppression
-            icon_label.pack(side="top", pady=10)
-        except:
-            print(f"Erreur lors du chargement de l'icône météo : {gif_path}")
-
-        # Ajouter la température et les conditions météo (centré)
-        weather_label = ctk.CTkLabel(
-            self.banner,
-            text=f"{température}°C | {condition}",
-            font=("Orbitron", 20, "bold"),
-            text_color="#821D1A",
-            bg_color="#333333"
-        )
-        weather_label.pack(side="top")
-
         # Ajoutez d'autres informations ou styles si nécessaire
 
     def return_to_menu(self):
@@ -287,6 +176,3 @@ class RaceInterface:
         self.entry_frame.destroy()
         self.show_main_menu()
 
-
-def get_weather_gif(condition_text):
-    return GIF_FOLDER + CONDITIONS_TO_GIFS.get(condition_text, "icons8-partly-cloudy.gif")
