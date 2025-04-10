@@ -2,7 +2,6 @@ import customtkinter as ctk
 import os
 
 
-
 class FormulaireInterface:
     def __init__(self, canvas, show_main_menu):
         self.canvas = canvas
@@ -12,41 +11,41 @@ class FormulaireInterface:
         # Cadre principal qui contient tout le formulaire
         self.entry_frame = ctk.CTkFrame(
             self.canvas,
-            width=900,  # Largeur ajustée pour trois sections
+            width=900,
             height=600,
             corner_radius=10,
-            bg_color="black",# Coins arrondis
-            fg_color="#222222"  # Fond gris foncé pour le formulaire
+            bg_color="black",
+            fg_color="#222222"
         )
         self.entry_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.widgets.append(self.entry_frame)
 
         # Encadré pour le "Nom de course" (au-dessus des sections)
-        self.add_course_name_block()  # Appelle la méthode pour ajouter le bloc Nom de course
+        self.add_course_name_block()
 
         # Création des trois sections côte à côte
         self.create_sections()
 
-        # Boutons Enregistrer et Retour (placés sous la Section 2, au centre de l'interface)
+        # Boutons Enregistrer et Retour
         self.save_button = ctk.CTkButton(
             self.entry_frame,
-            text="Enregistrer en .txt",
+            text="Enregistrer",
             command=self.save_to_txt,
             font=("Orbitron", 16),
-            fg_color="#DB3E39",  # Couleur rouge
-            text_color="white"  # Texte blanc
+            fg_color="#DB3E39",
+            text_color="white"
         )
-        self.save_button.grid(row=3, column=1, padx=10, pady=10)  # Aligné sous Section 2
+        self.save_button.grid(row=3, column=1, padx=10, pady=10)
 
         self.back_button = ctk.CTkButton(
             self.entry_frame,
             text="Retour",
             command=self.return_to_menu,
             font=("Orbitron", 16),
-            fg_color="#DB3E39",  # Couleur rouge
-            text_color="white"  # Texte blanc
+            fg_color="#DB3E39",
+            text_color="white"
         )
-        self.back_button.grid(row=4, column=1, padx=10, pady=(0, 10))  # Placé juste en dessous du bouton Enregistrer
+        self.back_button.grid(row=4, column=1, padx=10, pady=(0, 10))
 
     def add_course_name_block(self):
         """
@@ -54,27 +53,25 @@ class FormulaireInterface:
         """
         course_frame = ctk.CTkFrame(
             self.entry_frame,
-            fg_color="#333333",  # Couleur de fond pour l'encadré
-            corner_radius=10  # Coins légèrement arrondis
+            fg_color="#333333",
+            corner_radius=10
         )
         course_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
 
-        # Label pour "Nom de course"
         course_label = ctk.CTkLabel(
             course_frame,
             text="Nom de course",
             font=("Orbitron", 16),
-            text_color="#DB3E39"  # Texte rouge
+            text_color="#DB3E39"
         )
         course_label.grid(row=0, column=0, padx=5, pady=10, sticky="w")
 
-        # Champ d'entrée pour le Nom de course
         course_entry = ctk.CTkEntry(
             course_frame,
             placeholder_text="Entrez le nom de la course...",
             font=("Orbitron", 16),
-            fg_color="white",  # Champ de texte blanc
-            text_color="black"  # Texte noir
+            fg_color="white",
+            text_color="black"
         )
         course_entry.grid(row=0, column=1, padx=5, pady=10, sticky="ew")
 
@@ -82,24 +79,20 @@ class FormulaireInterface:
         """
         Crée trois sections horizontalement alignées en dessous du Nom de course
         """
-        section_titles = ["Début", "Section 1", "Section 2"]  # Titres pour chaque section
+        section_titles = ["Début", "Section 1", "Section 2"]
 
-        # Création des trois sections alignées horizontalement
         for col, section_title in enumerate(section_titles):
-            # Sous-cadre pour chaque section
             section_frame = ctk.CTkFrame(self.entry_frame, corner_radius=10, fg_color="#333333")
             section_frame.grid(row=1, column=col, padx=10, pady=10)
 
-            # Ajouter le titre de la section
             title_label = ctk.CTkLabel(
                 section_frame,
                 text=section_title,
                 font=("Orbitron", 16),
-                text_color="#DB3E39"  # Texte rouge
+                text_color="#DB3E39"
             )
             title_label.grid(row=0, column=0, columnspan=2, padx=5, pady=10, sticky="ew")
 
-            # Ajouter champs pour chaque ligne de la section
             self.add_section_fields(section_frame)
 
     def add_section_fields(self, frame):
@@ -108,13 +101,12 @@ class FormulaireInterface:
         - Ligne 1 : Longitude
         - Ligne 2 : Latitude
         """
-        # Ligne pour Longitude
         row_title_longitude = ctk.CTkLabel(
             frame,
             text="Longitude :",
             anchor="w",
             font=("Orbitron", 16),
-            text_color="#DB3E39"  # Rouge pour le label
+            text_color="#DB3E39"
         )
         row_title_longitude.grid(row=1, column=0, padx=5, pady=5, sticky="e")
 
@@ -125,13 +117,12 @@ class FormulaireInterface:
         )
         entry_longitude.grid(row=1, column=1, padx=5, pady=5, sticky="ew")
 
-        # Ligne pour Latitude
         row_title_latitude = ctk.CTkLabel(
             frame,
             text="Latitude :",
             anchor="w",
             font=("Orbitron", 16),
-            text_color="#DB3E39"  # Rouge pour le label
+            text_color="#DB3E39"
         )
         row_title_latitude.grid(row=2, column=0, padx=5, pady=5, sticky="e")
 
@@ -144,9 +135,10 @@ class FormulaireInterface:
 
     def save_to_txt(self):
         """
-            Enregistre les données du formulaire dans un fichier .txt dans le dossier Data_course.
-            Si le dossier n'existe pas, il est créé.
-            """
+        Enregistre les données du formulaire dans un fichier .txt dans le dossier Data_course.
+        Après une sauvegarde réussie, la page se ferme automatiquement
+        et retourne à la page précédente après 5 secondes.
+        """
         # Définir le chemin du dossier
         directory = "Data_course"
 
@@ -158,14 +150,13 @@ class FormulaireInterface:
         course_name = self.entry_frame.winfo_children()[0].winfo_children()[1].get()  # Champ Nom de course
         data = []
 
-        for section_frame in self.entry_frame.winfo_children()[1:4]:  # Sections Début, Section 1, Section 2
+        for section_frame in self.entry_frame.winfo_children()[1:4]:
             # Filtrer les entrées uniquement de type CTkEntry
             entries = [child for child in section_frame.winfo_children() if isinstance(child, ctk.CTkEntry)]
 
-            # S'assurer qu'il y a bien 2 entrées (longitude et latitude)
             if len(entries) == 2:
-                longitude = entries[0].get().strip()  # Lecture de l'entrée "Longitude"
-                latitude = entries[1].get().strip()  # Lecture de l'entrée "Latitude"
+                longitude = entries[0].get().strip()
+                latitude = entries[1].get().strip()
                 data.append((longitude, latitude))
             else:
                 print("Erreur : impossible de trouver les champs Longitude et Latitude dans l'une des sections.")
@@ -184,12 +175,35 @@ class FormulaireInterface:
                 file.write(f"  Latitude : {values[1]}\n")
                 file.write("\n")
 
-        print(f"Données sauvegardées dans : {file_path}.")
+        print(f"Données sauvegardées dans : {directory}.")
 
-        print(f"Données sauvegardées dans : {file_path}.")
+        # Afficher une confirmation dans l'interface utilisateur
+        success_label = ctk.CTkLabel(
+            self.entry_frame,
+            text=f"Données sauvegardées dans le dossier '{directory}'.",
+            font=("Orbitron", 16),
+            text_color="green",
+        )
+        success_label.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
+
+        # Planifier la fermeture de la page après 5 secondes
+        self.entry_frame.after(5000, self.close_form_interface)
+
+    def close_form_interface(self):
+        """
+        Ferme la fenêtre actuelle et retourne au menu principal.
+        """
+        # Détruire tous les widgets pour fermer la page
+        for widget in self.widgets:
+            widget.destroy()
+
+        # Appeler la méthode pour retourner au menu précédent
+        self.show_main_menu()
 
     def return_to_menu(self):
-        """Retourne au menu principal"""
+        """
+        Retourne directement au menu principal.
+        """
         for widget in self.widgets:
             widget.destroy()
         self.show_main_menu()
