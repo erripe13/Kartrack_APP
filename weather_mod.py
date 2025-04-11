@@ -106,7 +106,7 @@ def display_weather(self):
         self.banner,
         text=f"{température}°C | {condition}",
         font=("Orbitron", 20, "bold"),
-        text_color="#821D1A",
+        text_color="#DB3E39",
         bg_color="#333333"
         )
     weather_label.pack(side="top")

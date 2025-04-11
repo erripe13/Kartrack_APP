@@ -1,3 +1,5 @@
+import time
+
 import customtkinter as ctk
 import tkintermapview
 from PIL import ImageTk, Image
@@ -125,6 +127,52 @@ class RaceInterface:
             text_color="white"
         )
         self.time_label.place(relx=0.5, rely=0.1, anchor="center")
+
+        self.chrono_label = ctk.CTkLabel(
+            self.time_frame,
+            text="00:00:00",
+            font=("Orbitron", 30, "bold"),
+            text_color="white")
+
+        self.chrono_label.place(relx=0.5, rely=0.4, anchor="center")
+        self.start_time = time.time()
+
+        self.start_button = ctk.CTkButton(
+            self.time_frame,
+            text="Démarrer",
+            command=self.start_chrono,
+            fg_color=("#DB3E39", "#821D1A"),
+            width=100,
+            height=40
+        )
+        self.start_button.place(relx=0.3, rely=0.3, anchor="center")
+
+        self.stop_button = ctk.CTkButton(
+            self.time_frame,
+            text="Arrêter",
+            command=self.stop_chrono,
+            fg_color=("#DB3E39", "#821D1A"),
+            width=100,
+            height=40
+        )
+        self.stop_button.place(relx=0.7, rely=0.3, anchor="center")
+
+        self.reset_button = ctk.CTkButton(
+            self.time_frame,
+            text="Réinitialiser",
+            command=self.reset_chrono,
+            fg_color=("#DB3E39", "#821D1A"),
+            width=100,
+            height=40
+        )
+
+        self.start_time = None
+        self.running = False
+
+        self.update_chrono()
+
+        self.widgets.append(self.chrono_label)
+        self.widgets.append(self.time_label)
         self.widgets.append(self.time_frame)
 
 
@@ -168,6 +216,31 @@ class RaceInterface:
         self.map_widget.set_position(latitude, longitude, zoom=10)
 
         # Ajoutez d'autres informations ou styles si nécessaire
+
+    def start_chrono(self):
+        if not self.running:
+            self.start_time = time.perf_counter()
+            self.running = True
+            self.update_chrono()
+
+    def update_chrono(self):
+        if self.running:
+            elapsed_time = time.perf_counter() - self.start_time
+            minutes, remainder = divmod(int(elapsed_time), 60)
+            seconds = int(remainder)
+            hundredths = int((elapsed_time - int(elapsed_time)) * 100)
+            time_string = f"{minutes:02}:{seconds:02}:{hundredths:02}"
+            self.chrono_label.configure(text=time_string)
+            self.chrono_label.after(10, self.update_chrono)
+
+    def stop_chrono(self):
+        self.running = False
+
+    def reset_chrono(self):
+        self.running = False
+        self.start_time = None
+        self.chrono_label.configure(text="00:00:00")
+
 
     def return_to_menu(self):
         for widget in self.widgets:
