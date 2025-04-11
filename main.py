@@ -3,6 +3,7 @@ from PIL import Image, ImageTk, ImageFont
 from PIL.Image import Resampling
 # from karttrack_app import KartTrackApp
 from race_interface import RaceInterface
+from form_interface import FormulaireInterface
 # from review_interface import ReviewInterface
 
 
@@ -46,8 +47,8 @@ class MainInterface:
 
         self.button2 = ctk.CTkButton(
             self.canvas,
-            text="Review",
-            #command=self.review_interface,
+            text="Formulaire Circuit",
+            command=self.formulaire_interface,
             width=200,
             height=100,
             border_width=3,
@@ -58,7 +59,7 @@ class MainInterface:
             text_color="white",
             font=("Orbitron", 20)
         )
-        self.button2.place(relx=0.50, rely=0.5, anchor="center")
+        self.button2.place(relx=0.50, rely=0.6, anchor="center")
 
         self.button3 = ctk.CTkButton(
             self.canvas,
@@ -104,6 +105,11 @@ class MainInterface:
         self.button1.place(relx=0.35, rely=0.5, anchor="center")
         self.button2.place(relx=0.50, rely=0.5, anchor="center")
         self.button3.place(relx=0.65, rely=0.5, anchor="center")
+
+    def formulaire_interface(self):
+        for widget in self.canvas.winfo_children():
+            widget.place_forget()
+        self.formulaire = FormulaireInterface(self.canvas, self.show_main_menu)
 
 
 # Lancement de l'application
