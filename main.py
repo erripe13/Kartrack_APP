@@ -59,7 +59,7 @@ class MainInterface:
             text_color="white",
             font=("Orbitron", 20)
         )
-        self.button2.place(relx=0.50, rely=0.6, anchor="center")
+        self.button2.place(relx=0.50, rely=0.5, anchor="center")
 
         self.button3 = ctk.CTkButton(
             self.canvas,
