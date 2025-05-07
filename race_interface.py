@@ -54,6 +54,8 @@ class RaceInterface:
         self.time_frame = None
         self.banner = None
 
+        self.splits = []
+
 
     def display_main_interface(self):
 
@@ -186,6 +188,60 @@ class RaceInterface:
         self.button_back.place(x=left_width, y=self.screen_height-50,anchor="nw")
         self.widgets.append(self.button_back)
 
+        # --- Boutons S1, S2, S3 ---
+        self.s1_button = ctk.CTkButton(
+            self.time_frame,
+            text="S1",
+            fg_color=("#DB3E39", "#821D1A"),
+            width=80,
+            height=40,
+            font=("Orbitron", 16),
+            command=lambda: self.record_split(1),
+        )
+        self.s1_button.place(relx=0.25, rely=0.55, anchor="center")
+
+        self.s2_button = ctk.CTkButton(
+            self.time_frame,
+            text="S2",
+            fg_color=("#DB3E39", "#821D1A"),
+            width=80,
+            height=40,
+            font=("Orbitron", 16),
+            command=lambda: self.record_split(2)
+        )
+        self.s2_button.place(relx=0.5, rely=0.55, anchor="center")
+
+        self.s3_button = ctk.CTkButton(
+            self.time_frame,
+            text="S3",
+            fg_color=("#DB3E39", "#821D1A"),
+            width=80,
+            height=40,
+            font=("Orbitron", 16),
+            command=lambda: self.record_split(3)
+        )
+        self.s3_button.place(relx=0.75, rely=0.55, anchor="center")
+
+        # Affichage des temps de splits
+        self.split_labels = [
+            ctk.CTkLabel(self.time_frame, text="S1 : --:--:--", font=("Orbitron", 16), text_color="white"),
+            ctk.CTkLabel(self.time_frame, text="S2 : --:--:--", font=("Orbitron", 16), text_color="white"),
+            ctk.CTkLabel(self.time_frame, text="S3 : --:--:--", font=("Orbitron", 16), text_color="white"),
+        ]
+        for i, label in enumerate(self.split_labels):
+            label.place(relx=0.5, rely=0.65 + i * 0.06, anchor="center")
+
+        self.start_time = None
+        self.running = False
+        self.elapsed_time = 0
+
+        self.update_chrono()
+
+        self.widgets.append(self.chrono_label)
+        self.widgets.append(self.time_label)
+        self.widgets.append(self.time_frame)
+        self.widgets += [self.s1_button, self.s2_button, self.s3_button] + self.split_labels
+
     def search_event(self, event=None):
         # Coordonnées par défaut pour Cergy
         default_lat = 49.0388
@@ -242,12 +298,30 @@ class RaceInterface:
     def stop_chrono(self):
         self.running = False
 
+    def record_split(self, split_number):
+        """Enregistre le temps courant du chrono lors de l'appui sur S1 / S2 / S3."""
+        if self.running and self.start_time is not None:
+            current_time = time.perf_counter() - self.start_time
+            minutes, remainder = divmod(int(current_time), 60)
+            seconds = int(remainder)
+            hundredths = int((current_time - int(current_time)) * 100)
+            time_string = f"{minutes:02}:{seconds:02}:{hundredths:02}"
+            self.splits = self.splits[:split_number-1] + [time_string]
+            # Remplit avec "--:--:--" si nécessaire jusqu'à 3 splits
+            while len(self.splits) < 3:
+                self.splits.append("--:--:--")
+            self.split_labels[split_number-1].configure(text=f"S{split_number} : {time_string}")
+
+
     def reset_chrono(self):
         self.running = False
         self.start_time = None
         self.elapsed_time = 0
         self.chrono_label.configure(text="00:00:00")
         self.start_button.configure(text="Démarrer")
+        self.splits = []
+        for i, label in enumerate(self.split_labels):
+            label.configure(text=f"S{i + 1} : --:--:--")
 
     def return_to_menu(self):
         for widget in self.widgets:
