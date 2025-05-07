@@ -50,8 +50,6 @@ class RaceInterface:
         self.screen_width = self.canvas.winfo_screenwidth()
         self.screen_height = self.canvas.winfo_screenheight()
 
-        #wm.get_current_weather_conditions(self)
-
         self.map_frame = None
         self.time_frame = None
         self.banner = None
@@ -140,22 +138,13 @@ class RaceInterface:
         self.start_button = ctk.CTkButton(
             self.time_frame,
             text="Démarrer",
-            command=self.start_chrono,
+            command=self.toggle_chrono,  # Changer la commande
             fg_color=("#DB3E39", "#821D1A"),
             width=100,
-            height=40
+            height=40,
+            font=("Orbitron", 16)
         )
         self.start_button.place(relx=0.3, rely=0.3, anchor="center")
-
-        self.stop_button = ctk.CTkButton(
-            self.time_frame,
-            text="Arrêter",
-            command=self.stop_chrono,
-            fg_color=("#DB3E39", "#821D1A"),
-            width=100,
-            height=40
-        )
-        self.stop_button.place(relx=0.7, rely=0.3, anchor="center")
 
         self.reset_button = ctk.CTkButton(
             self.time_frame,
@@ -163,11 +152,14 @@ class RaceInterface:
             command=self.reset_chrono,
             fg_color=("#DB3E39", "#821D1A"),
             width=100,
-            height=40
+            height=40,
+            font=("Orbitron", 16)
         )
+        self.reset_button.place(relx=0.7, rely=0.3, anchor="center")
 
         self.start_time = None
         self.running = False
+        self.elapsed_time = 0
 
         self.update_chrono()
 
@@ -212,16 +204,30 @@ class RaceInterface:
             latitude = default_lat
             longitude = default_long
 
-        # Définir la position sur la map_widget
+
         self.map_widget.set_position(latitude, longitude, zoom=10)
 
-        # Ajoutez d'autres informations ou styles si nécessaire
 
     def start_chrono(self):
         if not self.running:
             self.start_time = time.perf_counter()
             self.running = True
             self.update_chrono()
+
+    def toggle_chrono(self):
+        if not self.running:
+            if self.start_time is None:  # Premier démarrage
+                self.start_time = time.perf_counter()
+                self.elapsed_time = 0
+            else:  # Reprise après pause
+                self.start_time = time.perf_counter() - self.elapsed_time
+            self.running = True
+            self.start_button.configure(text="Pause")
+            self.update_chrono()
+        else:
+            self.running = False
+            self.elapsed_time = time.perf_counter() - self.start_time
+            self.start_button.configure(text="Reprendre")
 
     def update_chrono(self):
         if self.running:
@@ -239,8 +245,9 @@ class RaceInterface:
     def reset_chrono(self):
         self.running = False
         self.start_time = None
+        self.elapsed_time = 0
         self.chrono_label.configure(text="00:00:00")
-
+        self.start_button.configure(text="Démarrer")
 
     def return_to_menu(self):
         for widget in self.widgets:
