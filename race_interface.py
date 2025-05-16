@@ -4,6 +4,7 @@ import customtkinter as ctk
 import tkintermapview
 from PIL import ImageTk, Image
 import weather_mod as wm
+import threading
 
 class RaceInterface:
     def __init__(self, canvas, show_main_menu):
@@ -243,10 +244,18 @@ class RaceInterface:
         self.widgets += [self.s1_button, self.s2_button, self.s3_button] + self.split_labels
 
     def search_event(self, event=None):
+        """Méthode appelée depuis l'UI, lance la recherche dans un thread séparé."""
+        thread = threading.Thread(target=self._search_event_worker, args=(event,), daemon=True)
+        thread.start()
+
+    def _search_event_worker(self, event):
+        """Travail réel de recherche, s'exécute en tâche de fond."""
         # Coordonnées par défaut pour Cergy
         default_lat = 49.0388
         default_long = 2.0784
 
+        # Lecture des champs : Attention, il faut lire les valeurs dans le thread principal !
+        # Donc on copie les entrées dans des variables avec after
         latitude_input = self.entry_lat.get()
         longitude_input = self.entry_long.get()
 
@@ -260,8 +269,8 @@ class RaceInterface:
             latitude = default_lat
             longitude = default_long
 
-
-        self.map_widget.set_position(latitude, longitude, zoom=10)
+        # On appelle la mise à jour de la map dans le thread principal via after
+        self.canvas.after(0, lambda: self.map_widget.set_position(latitude, longitude, zoom=10))
 
 
     def start_chrono(self):
@@ -293,7 +302,7 @@ class RaceInterface:
             hundredths = int((elapsed_time - int(elapsed_time)) * 100)
             time_string = f"{minutes:02}:{seconds:02}:{hundredths:02}"
             self.chrono_label.configure(text=time_string)
-            self.chrono_label.after(10, self.update_chrono)
+            self.chrono_label.after(50, self.update_chrono)
 
     def stop_chrono(self):
         self.running = False
@@ -329,4 +338,3 @@ class RaceInterface:
 
         self.entry_frame.destroy()
         self.show_main_menu()
-
