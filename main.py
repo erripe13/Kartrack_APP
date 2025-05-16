@@ -5,6 +5,7 @@ from PIL.Image import Resampling
 from race_interface import RaceInterface
 from form_interface import FormulaireInterface
 # from review_interface import ReviewInterface
+from lora_reader import LoRaReader
 
 
 class MainInterface:
@@ -95,6 +96,9 @@ class MainInterface:
 
         # Afficher l'interface de la course
         self.race_interface = RaceInterface(self.canvas, self.show_main_menu)
+        # suppose que tu as accès à l'instance ici
+        lora_reader = LoRaReader('COM3', 9600, self.race_interface.update_car_position)
+        lora_reader.start()
 
     def show_main_menu(self):
         # Remettre le fond principal

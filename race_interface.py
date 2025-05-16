@@ -338,3 +338,12 @@ class RaceInterface:
 
         self.entry_frame.destroy()
         self.show_main_menu()
+
+    def update_car_position(self, latitude, longitude):
+        # Cette méthode peut par exemple déplacer une icône ou un marker sur la carte
+        # À faire dans le thread principal, donc :
+        self.canvas.after(0, lambda: self._move_car(latitude, longitude))
+
+    def _move_car(self, latitude, longitude):
+        # Ici, placer ou déplacer le marker/voiture sur la carte
+        self.map_widget.set_car_position(latitude, longitude)
