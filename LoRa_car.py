@@ -1,25 +1,26 @@
 import threading
 import serial
-import time
+
+PORT = 'COM9'
+BAUDRATE = 115200
 
 class LoRaReader(threading.Thread):
-    def __init__(self, port, baudrate, callback):
+    def __init__(self,on_position_callback):
         super().__init__(daemon=True)
-        self.port = port
-        self.baudrate = baudrate
-        self.callback = callback  # Fonction qui reçoit latitude, longitude
+        self.on_position_callback = on_position_callback
         self.running = True
 
     def run(self):
         try:
-            with serial.Serial(self.port, self.baudrate, timeout=2) as ser:
+            with serial.Serial(stimeout=2) as ser:
                 while self.running:
-                    line = ser.readline().decode("utf-8").strip()
+                    line = ser.readline().decode('utf-8').strip()
                     if line:
                         try:
                             lat, lon = map(float, line.split(","))
-                            self.callback(lat, lon)  # Envoie à RaceInterface
+                            # Appel de la fonction passée par RaceInterface
+                            self.on_position_callback(lat, lon)
                         except Exception:
                             pass
         except Exception as e:
-            print("Erreur LoRa:", e)
+            print("Erreur série LoRa:", e)

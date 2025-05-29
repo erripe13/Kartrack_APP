@@ -6,6 +6,9 @@ from PIL import ImageTk, Image
 import weather_mod as wm
 import threading
 
+from LoRa_car import LoRaReader
+
+
 class RaceInterface:
     def __init__(self, canvas, show_main_menu):
         self.canvas = canvas
@@ -57,6 +60,10 @@ class RaceInterface:
 
         self.splits = []
 
+        self.lora_thread = LoRaReader(
+            on_position_callback=self.update_car_position
+        )
+        self.lora_thread.start()
 
     def display_main_interface(self):
 
@@ -335,15 +342,25 @@ class RaceInterface:
     def return_to_menu(self):
         for widget in self.widgets:
             widget.destroy()
-
         self.entry_frame.destroy()
         self.show_main_menu()
 
     def update_car_position(self, latitude, longitude):
-        # Cette méthode peut par exemple déplacer une icône ou un marker sur la carte
-        # À faire dans le thread principal, donc :
         self.canvas.after(0, lambda: self._move_car(latitude, longitude))
 
+    def gps_to_pixel(lat, lon, self=None):
+        """Convertit les coordonnées GPS en coordonnées pixel sur la carte."""
+        x = int((lon - LON_LEFT) / (LON_RIGHT - LON_LEFT) * self.map_widget.width)
+        y = int((LAT_TOP - lat) / (LAT_TOP - LAT_BOTTOM) * self.map_widget.height)
+        return x, y
+
     def _move_car(self, latitude, longitude):
-        # Ici, placer ou déplacer le marker/voiture sur la carte
-        self.map_widget.set_car_position(latitude, longitude)
+        # Conversion GPS vers pixels
+        x, y = gps_to_pixel(latitude, longitude)
+
+        r = 8  # rayon du marker
+        if hasattr(self, "car_marker") and self.car_marker is not None:
+            self.canvas.coords(self.car_marker, x - r, y - r, x + r, y + r)
+        else:
+            self.car_marker = self.canvas.create_oval(x - r, y - r, x + r, y + r,
+                                                      fill="red", outline="yellow", width=2)
