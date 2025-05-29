@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 import requests
 from tkinter import Label,Tk,PhotoImage
-from dico_meteo import GIF_FOLDER, CONDITIONS_TO_GIFS
+from dico_meteo import IMG_FOLDER, CONDITIONS_TO_IMG
 from PIL import Image, ImageTk, ImageFont
 
 dotenv_path = ".venv/.env"
@@ -54,12 +54,12 @@ def get_current_weather_conditions(self):
         condition_text = data["current"]["condition"]["text"]
 
         # Obtenir l'icône GIF associé
-        gif_path = get_weather_gif(condition_text)
+        img_path = get_weather_img(condition_text)
 
         return {
-            "température": temperature,
+            "temperature": temperature,
             "condition_text": condition_text,
-            "gif_path": gif_path  # Inclure le chemin du fichier GIF météo
+            "img_path": img_path
         }
     else:
         # En cas d'échec de la requête
@@ -85,26 +85,26 @@ def display_weather(self):
         widget.destroy()
 
         # Extraire les données météo
-    température = weather_data.get('température', 'N/A')
+    temperature = weather_data.get('temperature', 'N/A')
     condition = weather_data.get('condition_text', 'N/A')
-    gif_path = weather_data.get('gif_path', '')
+    img_path = weather_data.get('img_path', '')
 
         # Charger l'icône météo (au centre)
     try:
-        icon_image = Image.open(gif_path)
+        icon_image = Image.open(img_path)
         icon_photo = ImageTk.PhotoImage(icon_image)
 
             # Créer un label pour afficher l'icône météo
         icon_label = Label(self.banner, image=icon_photo,bg="#333333")
-        icon_label.image = icon_photo  # Sauvegarder la référence pour éviter la suppression
+        icon_label.image = icon_photo
         icon_label.pack(side="top", pady=10)
     except:
-        print(f"Erreur lors du chargement de l'icône météo : {gif_path}")
+        print(f"Erreur lors du chargement de l'icône météo : {img_path}")
 
-        # Ajouter la température et les conditions météo (centré)
+        # Ajouter la temperature et les conditions météo (centré)
     weather_label = ctk.CTkLabel(
         self.banner,
-        text=f"{température}°C | {condition}",
+        text=f"{temperature}°C | {condition}",
         font=("Orbitron", 20, "bold"),
         text_color="#DB3E39",
         bg_color="#333333"
@@ -112,5 +112,14 @@ def display_weather(self):
     weather_label.pack(side="top")
 
 
-def get_weather_gif(condition_text):
-    return GIF_FOLDER + CONDITIONS_TO_GIFS.get(condition_text, "icons8-partly-cloudy.gif")
+def get_weather_img(condition_text):
+    filename = CONDITIONS_TO_IMG.get(condition_text, "icons8-partiellement-nuageuse-64.png")
+    img_path = IMG_FOLDER + filename
+    if not os.path.exists(img_path):
+        print(f"Condition météo reçue : {condition_text}")
+        print(f"Fichier recherché : {filename}")
+        print(f"Chemin complet : {img_path}")
+        print("Fichiers disponibles dans le dossier :")
+        for f in os.listdir(IMG_FOLDER):
+            print(f"  - {f}")
+    return img_path

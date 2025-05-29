@@ -1,11 +1,9 @@
 import time
-
 import customtkinter as ctk
 import tkintermapview
 from PIL import ImageTk, Image
 import weather_mod as wm
 import threading
-
 from LoRa_car import LoRaReader
 
 
@@ -60,10 +58,21 @@ class RaceInterface:
 
         self.splits = []
 
+        try:
+            self.vehicle_image = Image.open("images/vehicle.jpg")
+            self.vehicle_image = self.vehicle_image.resize((30, 30))  # Redimensionner l'image
+            self.vehicle_icon = ImageTk.PhotoImage(self.vehicle_image)
+            self.vehicle_marker = None
+        except Exception as e:
+            print(f"Erreur lors du chargement de l'image du véhicule : {e}")
+            self.vehicle_icon = None
+
+            # Initialiser le thread LoRa avec le callback
         self.lora_thread = LoRaReader(
             on_position_callback=self.update_car_position
         )
         self.lora_thread.start()
+
 
     def display_main_interface(self):
 
@@ -167,6 +176,20 @@ class RaceInterface:
         )
         self.reset_button.place(relx=0.7, rely=0.3, anchor="center")
 
+        self.test_button = ctk.CTkButton(
+            self.time_frame,
+            text="Test Déplacement",
+            command=self.start_test_movement,
+            fg_color=("#DB3E39", "#821D1A"),
+            width=100,
+            height=40,
+            font=("Orbitron", 16)
+        )
+        self.test_button.place(relx=0.5, rely=0.85, anchor="center")
+
+        self.test_running = False
+        self.test_thread = None
+
         self.start_time = None
         self.running = False
         self.elapsed_time = 0
@@ -261,8 +284,6 @@ class RaceInterface:
         default_lat = 49.0388
         default_long = 2.0784
 
-        # Lecture des champs : Attention, il faut lire les valeurs dans le thread principal !
-        # Donc on copie les entrées dans des variables avec after
         latitude_input = self.entry_lat.get()
         longitude_input = self.entry_long.get()
 
@@ -288,10 +309,10 @@ class RaceInterface:
 
     def toggle_chrono(self):
         if not self.running:
-            if self.start_time is None:  # Premier démarrage
+            if self.start_time is None:
                 self.start_time = time.perf_counter()
                 self.elapsed_time = 0
-            else:  # Reprise après pause
+            else:
                 self.start_time = time.perf_counter() - self.elapsed_time
             self.running = True
             self.start_button.configure(text="Pause")
@@ -323,7 +344,6 @@ class RaceInterface:
             hundredths = int((current_time - int(current_time)) * 100)
             time_string = f"{minutes:02}:{seconds:02}:{hundredths:02}"
             self.splits = self.splits[:split_number-1] + [time_string]
-            # Remplit avec "--:--:--" si nécessaire jusqu'à 3 splits
             while len(self.splits) < 3:
                 self.splits.append("--:--:--")
             self.split_labels[split_number-1].configure(text=f"S{split_number} : {time_string}")
@@ -346,21 +366,51 @@ class RaceInterface:
         self.show_main_menu()
 
     def update_car_position(self, latitude, longitude):
-        self.canvas.after(0, lambda: self._move_car(latitude, longitude))
+        self.canvas.after(0, lambda: self._update_vehicle_marker(latitude, longitude))
 
-    def gps_to_pixel(lat, lon, self=None):
-        """Convertit les coordonnées GPS en coordonnées pixel sur la carte."""
-        x = int((lon - LON_LEFT) / (LON_RIGHT - LON_LEFT) * self.map_widget.width)
-        y = int((LAT_TOP - lat) / (LAT_TOP - LAT_BOTTOM) * self.map_widget.height)
-        return x, y
+    def _update_vehicle_marker(self, latitude, longitude):
+        try:
+            if self.vehicle_marker is None:
+                self.vehicle_marker = self.map_widget.set_marker(
+                    latitude,
+                    longitude,
+                    icon=self.vehicle_icon
+                )
+            else:
+                self.vehicle_marker.set_position(latitude, longitude)
 
-    def _move_car(self, latitude, longitude):
-        # Conversion GPS vers pixels
-        x, y = gps_to_pixel(latitude, longitude)
 
-        r = 8  # rayon du marker
-        if hasattr(self, "car_marker") and self.car_marker is not None:
-            self.canvas.coords(self.car_marker, x - r, y - r, x + r, y + r)
+        except Exception as e:
+            print(f"Erreur lors de la mise à jour du marqueur : {e}")
+
+    def start_test_movement(self):
+
+        if not self.test_running:
+            self.test_running = True
+            self.test_button.configure(text="Arrêter Test")
+            # Créer et démarrer le thread de test
+            self.test_thread = threading.Thread(target=self.test_position)
+            self.test_thread.daemon = True
+            self.test_thread.start()
         else:
-            self.car_marker = self.canvas.create_oval(x - r, y - r, x + r, y + r,
-                                                      fill="red", outline="yellow", width=2)
+            self.test_running = False
+            self.test_button.configure(text="Test Déplacement")
+
+    def test_position(self):
+        test_coords = [
+            (49.0388, 2.0784),
+            (49.0390, 2.0790),
+            (49.0395, 2.0795),
+            (49.0400, 2.0800),
+            (49.0405, 2.0795),
+            (49.0400, 2.0790),
+            (49.0395, 2.0785),
+            (49.0388, 2.0784)
+        ]
+
+        while self.test_running:
+            for lat, lon in test_coords:
+                if not self.test_running:
+                    break
+                self.update_car_position(lat, lon)
+                time.sleep(0.5)

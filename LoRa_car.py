@@ -18,7 +18,6 @@ class LoRaReader(threading.Thread):
                     if line:
                         try:
                             lat, lon = map(float, line.split(","))
-                            # Appel de la fonction passée par RaceInterface
                             self.on_position_callback(lat, lon)
                         except Exception:
                             pass
