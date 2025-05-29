@@ -96,7 +96,7 @@ def display_weather(self):
 
             # Créer un label pour afficher l'icône météo
         icon_label = Label(self.banner, image=icon_photo,bg="#333333")
-        icon_label.image = icon_photo
+        icon_label.image = icon_photo  # Sauvegarder la référence pour éviter la suppression
         icon_label.pack(side="top", pady=10)
     except:
         print(f"Erreur lors du chargement de l'icône météo : {img_path}")
