@@ -1,5 +1,6 @@
 import customtkinter as ctk
 import os
+import pywinstyles as pywin
 
 
 class FormulaireInterface:
@@ -17,7 +18,11 @@ class FormulaireInterface:
             bg_color="black",
             fg_color="#222222"
         )
+        pywin.set_opacity(self.entry_frame, color="black")
+        pywin.set_opacity(self.entry_frame, color="#222222")
         self.entry_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+
         self.widgets.append(self.entry_frame)
 
         # Encadré pour le "Nom de course" (au-dessus des sections)
@@ -33,6 +38,7 @@ class FormulaireInterface:
             command=self.save_to_txt,
             font=("Orbitron", 16),
             fg_color="#DB3E39",
+            bg_color="black",
             text_color="white"
         )
         self.save_button.grid(row=3, column=1, padx=10, pady=10)
@@ -43,6 +49,7 @@ class FormulaireInterface:
             command=self.return_to_menu,
             font=("Orbitron", 16),
             fg_color="#DB3E39",
+            bg_color="black",
             text_color="white"
         )
         self.back_button.grid(row=4, column=1, padx=10, pady=(0, 10))
@@ -54,6 +61,7 @@ class FormulaireInterface:
         course_frame = ctk.CTkFrame(
             self.entry_frame,
             fg_color="#333333",
+            bg_color="black",
             corner_radius=10
         )
         course_frame.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
@@ -71,6 +79,7 @@ class FormulaireInterface:
             placeholder_text="Entrez le nom de la course...",
             font=("Orbitron", 16),
             fg_color="white",
+            bg_color="black",
             text_color="black"
         )
         course_entry.grid(row=0, column=1, padx=5, pady=10, sticky="ew")

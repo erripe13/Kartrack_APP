@@ -114,6 +114,7 @@ class MainInterface:
         self.bg_item = self.canvas.create_image(0, 0, anchor="nw", image=self.background_photo)
 
         # Replacer les boutons
+        self.title_label.place(relx=0.5, rely=0.3, anchor="center")
         self.button1.place(relx=0.35, rely=0.5, anchor="center")
         self.button2.place(relx=0.50, rely=0.5, anchor="center")
         self.button3.place(relx=0.65, rely=0.5, anchor="center")

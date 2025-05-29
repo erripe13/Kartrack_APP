@@ -1,5 +1,6 @@
 import time
 import customtkinter as ctk
+import pywinstyles as pywin
 import tkintermapview
 from PIL import ImageTk, Image
 import weather_mod as wm
@@ -34,7 +35,6 @@ class RaceInterface:
 
         self.entry_long = ctk.CTkEntry(self.entry_frame, placeholder_text="Longitude",font=("Orbitron",24))
         self.entry_long.pack(pady=10, padx=20,)
-
 
         self.entry_butt = ctk.CTkButton(
             self.entry_frame,
@@ -73,6 +73,8 @@ class RaceInterface:
         )
         self.lora_thread.start()
 
+        pywin.set_opacity(self.entry_frame, color="#191919")
+
 
     def display_main_interface(self):
 
@@ -96,12 +98,14 @@ class RaceInterface:
         self.track_name_label = ctk.CTkLabel(
             self.banner,
             text=self.entry_name.get(),
-            font=("Orbitron", 24),
+            font=("Orbitron", 40),
             corner_radius=0,
             text_color="white"
         )
         self.track_name_label.place(relx=0.1, rely=0.5, anchor="center")
         self.widgets.append(self.track_name_label)
+
+        pywin.set_opacity(self.banner, color="#333333",value=0.9)
 
 
         # --------- Image satellite à gauche (2/3) ---------
@@ -122,6 +126,8 @@ class RaceInterface:
         self.map_widget.place(relx=0.5, rely=0.5, anchor="center")
         self.search_event()
 
+        pywin.set_opacity(self.map_frame, color="#222222")
+
 
         # --------- Chronos à droite (1/3) ---------
         right_width = self.screen_width - left_width
@@ -135,11 +141,13 @@ class RaceInterface:
             fg_color="#1A1D21"
         )
         self.time_frame.place(x=left_width, y=self.banner_height, anchor="nw")
+        pywin.set_opacity(self.time_frame, color="#1A1D21")
+
 
         self.time_label = ctk.CTkLabel(
             self.time_frame,
             text="Temps",
-            font=("Orbitron", 24),
+            font=("Orbitron", 40),
             corner_radius=0,
             text_color="white"
         )
