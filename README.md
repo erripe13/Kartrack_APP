@@ -28,7 +28,6 @@ Kartrack est un système embarqué de chronométrage et de télémétrie pour ka
 
 ### Illustration
 ![Texte alternatif](images/schema_interface.jpeg)
-![Texte alternatif](images/schema.jpg)
 
 ## Auteurs
 
